@@ -40,8 +40,6 @@ def video_feed():
 
 if __name__ == '__main__':
     print("Web server establishing...")
-    app.run(host='0.0.0.0', debug=True, threaded=True)
-
     MQTTSub = MQTT_Subscriber.MQTTSubscriber('has/system-controller')
     RFIDRead = rfid_controls.RFIDReader()
     servo_control = servo_control.GroveServo(int(sys.argv[1]))
@@ -49,6 +47,5 @@ if __name__ == '__main__':
     RFID_Thread = threading.Thread(target=RFIDRead.run, args=(), daemon=True)
     MQTT_Thread.start()
     RFID_Thread.start()
-    MQTT_Thread.join()
-    RFID_Thread.join()
+    app.run(host='0.0.0.0', debug=True, threaded=True)
     print("Exiting")
