@@ -16,10 +16,14 @@ class MQTTSubscriber:
             else:
                 print('Error connection {0}'.format(rc))
 
+        def on_disconnect(client, userdata, rc=0):
+            client.loop_stop()
+
         client = mqtt_client.Client(self.client_id)
         client.username_pw_set('server', 'P@ssw0rd123')
         client.on_connect = on_connect
-        client.connect(self.broker, self.port)
+        client.on_disconnect = on_disconnect
+        client.connect(self.broker, self.port, keepalive=10)
         return client
 
     def subscribe(self, client: mqtt_client, servo_obj):
@@ -36,6 +40,6 @@ class MQTTSubscriber:
     def run(self, servo_obj):
         client = self.connect_mqtt()
         self.subscribe(client, servo_obj)
-        client.loop_forever()
+        client.loop_start()
 
 
