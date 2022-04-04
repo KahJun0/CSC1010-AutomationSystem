@@ -23,7 +23,7 @@ class MQTTSubscriber:
         client.username_pw_set('server', 'P@ssw0rd123')
         client.on_connect = on_connect
         client.on_disconnect = on_disconnect
-        client.connect(self.broker, self.port, keepalive=10)
+        client.connect(self.broker, self.port, keepalive=6000)
         return client
 
     def subscribe(self, client: mqtt_client, servo_obj):

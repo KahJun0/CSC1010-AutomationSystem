@@ -1,3 +1,5 @@
+import time
+
 from paho.mqtt import client as mqtt_client
 
 
@@ -25,7 +27,7 @@ class MQTTPublisher:
         self.client.username_pw_set('endpoint1', 'Endp0int123')
         self.client.on_connect = on_connect
         self.client.on_disconnect = on_disconnect
-        self.client.connect(self.broker, self.port, keepalive=10)
+        self.client.connect(self.broker, self.port, keepalive=5000)
         return self.client
 
     def publish(self, msg):
@@ -36,6 +38,8 @@ class MQTTPublisher:
         else:
             print("Failed to send message to topic {0}, restarting".format(self.topic))
             self.client.connect(self.broker, self.port, keepalive=10)
+            time.sleep(2)
+            result = self.client.publish(self.topic, msg)
 
     def run(self):
         self.client.loop_start()
