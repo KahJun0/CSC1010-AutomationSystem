@@ -26,6 +26,7 @@ class GroveServo:
         self.IO.set_servo_pulsewidth(self.channel, 500)
         time.sleep(5)
         self.close()
+        return 1
 
 
 Grove = GroveServo
