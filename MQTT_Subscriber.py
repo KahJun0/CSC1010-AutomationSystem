@@ -9,7 +9,6 @@ class MQTTSubscriber:
         self.port = 1883
         self.topic = 'has/door'
         self.client_id = cid
-        self.is_open = False
 
     def connect_mqtt(self) -> mqtt_client:
         def on_connect(client, userdata, flags, rc):
@@ -32,16 +31,12 @@ class MQTTSubscriber:
         def on_message(client, userdata, msg):
             print("Received {0} from {1} topic".format(msg.payload.decode(), msg.topic))
             if msg.topic == 'has/door':
-                if self.is_open == False:
-                    self.is_open = True
-                    if msg.payload.decode() == 'open':
-                        servo_obj.open()
-                    elif msg.payload.decode() == 'close':
-                        servo_obj.close()
-                if self.is_open == True:
-                    print("Already opened, waiting")
-                    time.sleep(5)
-                    self.is_open = False
+                if msg.payload.decode() == 'open':
+                    client.unsubscribe(self.topic)
+                    if servo_obj.open():
+                        client.subscribe(self.topic)
+                elif msg.payload.decode() == 'close':
+                    servo_obj.close()
         client.subscribe(self.topic)
         client.on_message = on_message
 
